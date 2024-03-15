@@ -1,4 +1,5 @@
 import json
+from argparse import Namespace
 from dataclasses import dataclass
 from enum import Enum
 from bs4 import BeautifulSoup
@@ -13,7 +14,7 @@ class Choose:
     def __init__(self, data: dict) -> None:
         self.data = data
         self.textual = [
-            BeautifulSoup(data,'html.parser').get_text()
+            BeautifulSoup(data, 'html.parser').get_text()
             for data in self.data['info']['st_nr'].split("</p>")
         ]
         self.questions = self.parse()
@@ -39,24 +40,29 @@ class Role:
     textual: list
     questions: list
 
-    def __init__(self, data: dict) -> None:
+    def __init__(self, data: dict, args: Namespace) -> None:
         self.data = data
         self.textual = [
             data.replace("</p>", "")
             for data in self.data['info']['value'].replace("<p>", "").split("</p>")
         ]
-        self.questions = self.parse()
+        if args.answer_sorted:
+            self.questions = self.parse(sort=True, role_answers_limit=args.role_answers_limit)
+        else:
+            self.questions = self.parse(role_answers_limit=args.role_answers_limit)
 
-    def parse(self) -> list:
+    def parse(self, role_answers_limit: int, sort: bool = False) -> list:
         resu = []
         for question in self.data['info']['question']:
             answers = [
                 answer['value']
                 for answer in question['std']
             ]
+            if sort:
+                answers.sort(key=len)
             ques = {
                 'stem': question['ask'],
-                'answer': answers
+                'answer': answers[:role_answers_limit]
             }
             resu.append(ques)
         return resu
@@ -98,13 +104,13 @@ class QuestionType(Enum):
     read = 3
 
     @classmethod
-    def from_json(cls, data: str):
+    def from_json(cls, data: str, args: Namespace):
         contents: dict = json.loads(data)
         match contents['structure_type']:
             case "collector.choose":
                 return Choose(contents)
             case "collector.role":
-                return Role(contents)
+                return Role(contents, args)
             case "collector.picture":
                 return Picture(contents)
             case "collector.read":
