@@ -1,8 +1,10 @@
 import json
 from dataclasses import dataclass
 from enum import Enum
+from bs4 import BeautifulSoup
 
 
+# 听后选择的类型
 @dataclass
 class Choose:
     textual: list
@@ -11,8 +13,8 @@ class Choose:
     def __init__(self, data: dict) -> None:
         self.data = data
         self.textual = [
-            data.replace("</p>", "")
-            for data in self.data['info']['st_nr'].replace("<p>", "").split("</p>")
+            BeautifulSoup(data,'html.parser').get_text()
+            for data in self.data['info']['st_nr'].split("</p>")
         ]
         self.questions = self.parse()
 
@@ -24,7 +26,7 @@ class Choose:
                 for option in question['xxlist']
             ]
             ques = {
-                'stem': question['xt_nr'],
+                'stem': BeautifulSoup(question['xt_nr'], 'html.parser').get_text(),
                 'answer': question['answer'],
                 'options': options
             }

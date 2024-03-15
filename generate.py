@@ -70,7 +70,7 @@ def to_html(aws: list, save_path: Union[None, str] = None):
 def to_pdf(aws: list, save_path="result.pdf"):
     doc = to_html(aws)
     # 将wkhtmltopdf.exe程序绝对路径传入config对象
-    path_wkthmltopdf = r'include\\wkhtmltox\\bin\\wkhtmltopdf.exe'
-    config = pdfkit.configuration(wkhtmltopdf=path_wkthmltopdf)
+    path_wkhtmltopdf = r'include\\wkhtmltopdf.exe'
+    config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
     # 生成pdf文件，to_file为文件路径
     pdfkit.from_string(doc, save_path, configuration=config, verbose=True)
