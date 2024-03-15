@@ -11,8 +11,13 @@ if __name__ == '__main__':
     parser.add_argument('--version', '-V', action='version',
                         version='%(prog)s version : v2.0.0',
                         help='show the version')
+
+    # 是否显示提示
+    parser.add_argument('--verbose', dest='verbose', action='store_true',
+                        help='increase output verbosity(only to_pdf can use)')
+
     # 指定数据文件路径
-    parser.add_argument('--data_path', dest='file_path',
+    parser.add_argument('--data_path', dest='data_path',
                         type=str, default='.\\data',
                         help='The location where the data files are stored')
 
@@ -45,7 +50,7 @@ if __name__ == '__main__':
 
     # 获取所有题目答案文件
     datas = []
-    for root, dirs, files in os.walk(".\\data", topdown=False):
+    for root, dirs, files in os.walk(args.data_path, topdown=False):
         for name in files:
             if name == "content2.json":
                 datas.append(os.path.join(root, name))
@@ -59,6 +64,6 @@ if __name__ == '__main__':
 
     match args.output_type:
         case "pdf":
-            to_pdf(answers, save_path=os.path.join(args.output_path, args.output_name + ".pdf"))
+            to_pdf(answers, save_path=os.path.join(args.output_path, args.output_name + ".pdf"), args=args)
         case "html":
             to_html(answers, save_path=str(os.path.join(args.output_path, args.output_name + ".html")))

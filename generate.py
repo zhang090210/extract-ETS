@@ -1,3 +1,5 @@
+import os
+import sys
 from typing import Union
 
 import dominate
@@ -5,6 +7,12 @@ from dominate.tags import *
 import pdfkit
 
 from get_data import *
+
+
+def get_resource_path(relative_path):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
 
 
 def to_html(aws: list, save_path: Union[None, str] = None):
@@ -67,10 +75,10 @@ def to_html(aws: list, save_path: Union[None, str] = None):
             f.write(doc.render())
 
 
-def to_pdf(aws: list, save_path="result.pdf"):
+def to_pdf(aws: list, save_path, args: Namespace):
     doc = to_html(aws)
     # 将wkhtmltopdf.exe程序绝对路径传入config对象
-    path_wkhtmltopdf = r'include\\wkhtmltopdf.exe'
-    config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
+    path_wkhtmltopdf = r"include\\wkhtmltopdf.exe"
+    config = pdfkit.configuration(wkhtmltopdf=get_resource_path(path_wkhtmltopdf))
     # 生成pdf文件，to_file为文件路径
-    pdfkit.from_string(doc, save_path, configuration=config, verbose=True)
+    pdfkit.from_string(doc, save_path, configuration=config, verbose=args.verbose)
