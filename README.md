@@ -1,12 +1,17 @@
-# 用于E听说破解的软件，可以获取本地E听说试题的答案
+# 用于E听说破解的软件，可以获取本地E听说试题的答案（高中版）
 
-## 2024年2月16日17点37分 0.0.1 on windows
+## **1.如何使用**
 
-python version：Python 3.10.13
+方法1：
 
-实现了e听说答案转html和pdf文件的功能，未开发UI和自动寻找答案的功能，需要用户将答案手动移动到项目文件夹下并改名为data
+1. 安装python>=3.8
 
-todo:
+```shell
+git clone -b senior https://github.com/zhang090210/extract-ETS.git
+pip install -r requrequirement.txt
+python main.py
+```
 
-1. 加入Windows端UI
-2. 加入自动寻找答案
+方法2：
+
+从`release`页面下载可执行文件
